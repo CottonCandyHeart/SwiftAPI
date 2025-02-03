@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image:
+      'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=swiftdb'
+      - 'POSTGRES_PASSWORD=nimda'
+      - 'POSTGRES_USER=admin'
+    ports:
+      - '5432:5432'
