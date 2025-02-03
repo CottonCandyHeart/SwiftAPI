@@ -7,6 +7,8 @@ public class Controller {
     @GetMapping("/v1/swift-codes/{swift-code}")
     public String getSwiftCode(@PathVariable("swift-code") String swiftCode){
         // TODO
+
+
         return "SWIFT CODE: " + swiftCode;
     }
 
