@@ -15,10 +15,16 @@ import lombok.ToString;
 public class Bank {
     @Id
     private String SWIFTCode;
+    @Column
     private String codeType;
+    @Column
     private String bankName;
+    @Column
     private String address;
+    @Column
     private String townName;
+    @Column
+    private boolean isHeadquarter;
 
     @ManyToOne
     @JoinColumn(name = "ISO2", referencedColumnName = "ISO2")

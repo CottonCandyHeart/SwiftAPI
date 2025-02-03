@@ -14,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileService {
-    private List<List<String>> list;
-
-    public void readFile(String filePath) throws IOException, InvalidFormatException {
+    public List<List<String>> readFile(String filePath) throws IOException, InvalidFormatException {
         FileInputStream file = new FileInputStream(new File(filePath));
         Workbook workbook = new XSSFWorkbook(file);
         Sheet sheet = workbook.getSheetAt(0);
 
-        list = new ArrayList<>();
+        List<List<String>> list = new ArrayList<>();
 
         for (Row row : sheet){
             List<String> rowList = new ArrayList<>();
@@ -36,9 +34,7 @@ public class FileService {
         workbook.close();
         file.close();
 
-    }
-
-    public void createTables(){
+        return list;
 
     }
 }
