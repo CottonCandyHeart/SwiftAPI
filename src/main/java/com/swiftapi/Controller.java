@@ -17,9 +17,9 @@ public class Controller {
     }
 
     @PostMapping("/v1/swift-codes")
-    public String postAllSwiftCodes(){
+    public void postAllSwiftCodes(@RequestBody String s /*Swift swift*/){
         // TODO
-        return "SWIFT CODES";
+        System.out.println("Received SWIFT Codes");
     }
 
     @DeleteMapping("/v1/swift-codes/{swift-code}")
