@@ -1,9 +1,17 @@
 package com.swiftapi;
 
+import com.swiftapi.model.Bank;
+import com.swiftapi.model.Country;
+import com.swiftapi.repository.BankRepository;
+import com.swiftapi.repository.CountryRepository;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class Controller {
+
+    BankRepository bankRepo;
+    CountryRepository countryRepo;
+
     @GetMapping("/v1/swift-codes/{swift-code}")
     public String getSwiftCode(@PathVariable("swift-code") String swiftCode){
         // TODO
@@ -19,9 +27,9 @@ public class Controller {
     }
 
     @PostMapping("/v1/swift-codes")
-    public void postAllSwiftCodes(@RequestBody String s /*Swift swift*/){
+    public void addSwiftCode(@RequestBody Bank bank, @RequestBody Country country){
         // TODO
-        System.out.println("Received SWIFT Codes");
+        System.out.println("SWIFT code added successfully");
     }
 
     @DeleteMapping("/v1/swift-codes/{swift-code}")
