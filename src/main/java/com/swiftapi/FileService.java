@@ -29,6 +29,7 @@ public class FileService {
             list.add(rowList);
         }
 
+        // REMOVE TITLE LINE
         list.remove(0);
 
         workbook.close();

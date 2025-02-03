@@ -1,0 +1,61 @@
+<!-- src/main/resources/templates/addSWIFTForm.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add new SWIFT Code</title>
+</head>
+<body>
+<h1>Add new SWIFT Code</h1>
+<form id="swiftForm" action="/v1/swift-codes" method="POST">
+    <label for="swiftCode" style="padding: 10px">SWIFT Code:</label>
+    <input type="text" id="swiftCode" name="swiftCode" style="margin: 10px" required><br>
+
+    <label for="bankName" style="padding: 10px">Bank Name:</label>
+    <input type="text" id="bankName" name="bankName" style="margin: 10px" required><br>
+
+    <label for="address" style="padding: 10px">Address:</label>
+    <input type="text" id="address" name="address" style="margin: 10px" required><br>
+
+    <label for="countryName" style="padding: 10px">Country Name:</label>
+    <input type="text" id="countryName" name="countryName" style="margin: 10px" required><br>
+
+    <label for="countryISO2" style="padding: 10px">Country ISO2:</label>
+    <input type="text" id="countryISO2" name="countryISO2" style="margin: 10px" required><br>
+
+    <label for="isHeadquarter" style="padding: 10px">Is Headquarter:</label>
+    <input type="checkbox" id="isHeadquarter" name="isHeadquarter" style="margin: 10px"><br>
+
+    <button type="submit" style="margin-top: 20px; margin-left: 10px">Submit</button>
+</form>
+<div id="responseMessage"></div>
+
+<script>
+    const form = document.getElementById('swiftForm');
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+
+        try {
+            const response = await fetch('/v1/swift-codes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json().catch(() => null);
+            if (response.ok) {
+                document.getElementById('responseMessage').innerText = result ? result.message : 'Success!';
+            } else {
+                document.getElementById('responseMessage').innerText = result ? result.message : 'Something went wrong';
+            }
+        } catch (error) {
+            document.getElementById('responseMessage').innerText = 'Error: ' + error.message;
+        }
+    });
+</script>
+</body>
+</html>

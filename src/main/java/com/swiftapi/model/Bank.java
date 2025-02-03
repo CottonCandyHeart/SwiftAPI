@@ -25,7 +25,6 @@ public class Bank {
     private String townName;
     @Column
     private boolean isHeadquarter;
-
     @ManyToOne
     @JoinColumn(name = "ISO2", referencedColumnName = "ISO2")
     private Country country;
