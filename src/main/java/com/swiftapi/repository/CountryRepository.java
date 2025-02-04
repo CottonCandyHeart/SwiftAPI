@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CountryRepository extends JpaRepository<Country, String> {
     Optional<Country> findByISO2(String countryISO2);
 
+
 }

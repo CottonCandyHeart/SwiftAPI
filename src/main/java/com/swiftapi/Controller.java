@@ -2,6 +2,7 @@ package com.swiftapi;
 
 import com.swiftapi.model.Bank;
 import com.swiftapi.model.Country;
+import com.swiftapi.model.CountryISO2Request;
 import com.swiftapi.model.SwiftCodeRequest;
 import com.swiftapi.repository.BankRepository;
 import com.swiftapi.repository.CountryRepository;
@@ -28,7 +29,7 @@ public class Controller {
     public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode){
         Optional<Bank> opt = br.findBySWIFTCode(swiftCode);
 
-        if (opt.isEmpty()) return null;
+        if (opt.isEmpty()) return ResponseEntity.ok("No banks available");
 
         Bank bank = opt.get();
 
@@ -54,15 +55,27 @@ public class Controller {
             SwiftCodeRequest.SingleBranch branch = new SwiftCodeRequest.SingleBranch(bank);
             return ResponseEntity.ok(branch);
         }
-
-        //return "SWIFT CODE: " + swiftCode;
     }
 
     // SHOW BANKS FOR COUNTRY
     @GetMapping("/v1/swift-codes/country/{countryISO2code}")
-    public String getISO2Code(@PathVariable("countryISO2code") String ISO2Code){
-        // TODO
-        return "COUNTRY ISO2 CODE: " + ISO2Code;
+    public ResponseEntity<?> getISO2Code(@PathVariable("countryISO2code") String ISO2Code){
+        Optional<Country> opt = cr.findByISO2(ISO2Code);
+        if (opt.isEmpty()) return ResponseEntity.ok("No country available");
+        Country country = opt.get();
+
+        List<SwiftCodeRequest.Branch> branchList = br.findByCountryISO2(ISO2Code)
+                .stream()
+                .map(SwiftCodeRequest.Branch::new)
+                .toList();
+
+        CountryISO2Request ciso2r = new CountryISO2Request();
+        ciso2r.setCountryISO2(country.getISO2());
+        ciso2r.setCountryName(country.getCountryName());
+        ciso2r.setSwiftCodes(branchList);
+
+
+        return ResponseEntity.ok(ciso2r);
     }
 
     // ADD NEW BANK
