@@ -1,4 +1,4 @@
-package com.swiftapi;
+package com.swiftapi.controller;
 
 import com.swiftapi.model.SwiftCodeRequest;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +15,8 @@ public class SwiftCodeController {
         return "addSWIFTForm";
     }
 
-    @PostMapping("/v1/swift-codes")
-    public String handleSubmit(@ModelAttribute SwiftCodeRequest swiftCodeRequest) {
-        return "formSuccess";
-    }
+    //@PostMapping("/v1/swift-codes")
+    //public SwiftCodeRequest handleSubmit(@ModelAttribute SwiftCodeRequest swiftCodeRequest) {
+     //   return swiftCodeRequest;
+    //}
 }

@@ -1,4 +1,4 @@
-package com.swiftapi;
+package com.swiftapi.controller;
 
 import com.swiftapi.model.Bank;
 import com.swiftapi.model.Country;
@@ -7,7 +7,10 @@ import com.swiftapi.model.SwiftCodeRequest;
 import com.swiftapi.repository.BankRepository;
 import com.swiftapi.repository.CountryRepository;
 import com.swiftapi.service.BankService;
+
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +32,7 @@ public class Controller {
     public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode){
         Optional<Bank> opt = br.findBySWIFTCode(swiftCode);
 
-        if (opt.isEmpty()) return ResponseEntity.ok("No banks available");
+        if (opt.isEmpty()) return ResponseEntity.ok("Bank not found");
 
         Bank bank = opt.get();
 
@@ -61,7 +64,7 @@ public class Controller {
     @GetMapping("/v1/swift-codes/country/{countryISO2code}")
     public ResponseEntity<?> getISO2Code(@PathVariable("countryISO2code") String ISO2Code){
         Optional<Country> opt = cr.findByISO2(ISO2Code);
-        if (opt.isEmpty()) return ResponseEntity.ok("No country available");
+        if (opt.isEmpty()) return ResponseEntity.ok("Country not found");
         Country country = opt.get();
 
         List<SwiftCodeRequest.Branch> branchList = br.findByCountryISO2(ISO2Code)
@@ -79,21 +82,28 @@ public class Controller {
     }
 
     // ADD NEW BANK
-    @PostMapping
-    public ResponseEntity<?> addSwiftCode(@RequestBody SwiftCodeRequest scr) {
+    @PostMapping("/v1/swift-codes")
+    public String addSwiftCode(@RequestBody SwiftCodeRequest scr) {
         boolean success = bs.saveBank(scr);
 
         if (success) {
-            return ResponseEntity.ok("SWIFT code successfully added.");
+            return "SWIFT code successfully added.";
         } else {
-            return ResponseEntity.status(500).body("Error adding SWIFT code.");
+            return "Error adding SWIFT code.";
         }
     }
 
     // DELETE BANK
     @DeleteMapping("/v1/swift-codes/{swift-code}")
+    @Transactional
     public String deleteSwiftCode(@PathVariable("swift-code") String swiftCode){
-        // TODO
-        return swiftCode + " DELETED";
+        Optional<Bank> bank = br.findBySWIFTCode(swiftCode);
+
+        if (bank.isPresent()) {
+            br.deleteBySWIFTCode(swiftCode);
+            return swiftCode + " DELETED";
+        } else {
+            return "SWIFT Code not found: " + swiftCode;
+        }
     }
 }
