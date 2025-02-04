@@ -10,4 +10,5 @@ import java.util.Optional;
 @RepositoryRestResource
 public interface BankRepository extends JpaRepository<Bank, String> {
     Optional<Bank> findBySWIFTCode(String swiftCode);
+    List<Bank> findBySWIFTCodeStartingWithAndIsHeadquarterFalse(String swiftCode);
 }

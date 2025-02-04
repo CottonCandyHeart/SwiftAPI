@@ -6,21 +6,26 @@ import com.swiftapi.model.SwiftCodeRequest;
 import com.swiftapi.repository.BankRepository;
 import com.swiftapi.repository.CountryRepository;
 import com.swiftapi.service.BankService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class Controller {
 
+    @Autowired
     BankRepository br;
+    @Autowired
     CountryRepository cr;
+    @Autowired
     BankService bs;
 
     // SHOW BANK INFO
     @GetMapping("/v1/swift-codes/{swift-code}")
-    public Bank getSwiftCode(@PathVariable("swift-code") String swiftCode){
+    public ResponseEntity<?> getSwiftCode(@PathVariable("swift-code") String swiftCode){
         Optional<Bank> opt = br.findBySWIFTCode(swiftCode);
 
         if (opt.isEmpty()) return null;
@@ -28,11 +33,26 @@ public class Controller {
         Bank bank = opt.get();
 
         if (bank.isHeadquarter()){
-            System.out.println();
-            return bank;
+            SwiftCodeRequest scr = new SwiftCodeRequest();
+            scr.setSwiftCode(bank.getSWIFTCode());
+            scr.setAddress(bank.getAddress());
+            scr.setBankName(bank.getBankName());
+            scr.setCountryISO2(bank.getCountry().getISO2());
+            scr.setCountryName(bank.getCountry().getCountryName());
+            scr.setHeadquarter(true);
+
+            List<SwiftCodeRequest.Branch> branchList = br.findBySWIFTCodeStartingWithAndIsHeadquarterFalse(bank.getSWIFTCode().substring(0,8))
+                    .stream()
+                    .map(SwiftCodeRequest.Branch::new)
+                    .toList();
+
+            scr.setBranches(branchList);
+
+            return ResponseEntity.ok(scr);
 
         } else {
-            return bank;
+            SwiftCodeRequest.SingleBranch branch = new SwiftCodeRequest.SingleBranch(bank);
+            return ResponseEntity.ok(branch);
         }
 
         //return "SWIFT CODE: " + swiftCode;
@@ -56,13 +76,7 @@ public class Controller {
             return ResponseEntity.status(500).body("Error adding SWIFT code.");
         }
     }
-/*
-    @PostMapping("/v1/swift-codes")
-    public void addSwiftCode(@RequestBody Bank bank, @RequestBody Country country){
-        // TODO
-        System.out.println("SWIFT code added successfully");
-    }
-*/
+
     // DELETE BANK
     @DeleteMapping("/v1/swift-codes/{swift-code}")
     public String deleteSwiftCode(@PathVariable("swift-code") String swiftCode){
