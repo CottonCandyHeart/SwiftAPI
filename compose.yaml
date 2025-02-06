@@ -8,3 +8,27 @@ services:
       - 'POSTGRES_USER=admin'
     ports:
       - '5432:5432'
+    networks:
+      - my-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  app:
+        image: swiftapi
+        container_name: spring-container2
+        environment:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/swiftdb
+          SPRING_DATASOURCE_USERNAME: admin
+          SPRING_DATASOURCE_PASSWORD: nimda
+        ports:
+          - "8080:8080"
+        networks:
+          - my-network
+        depends_on:
+          - postgres
+
+networks:
+    my-network:
+        driver: bridge
+
+volumes:
+      postgres-data:

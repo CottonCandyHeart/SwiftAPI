@@ -5,10 +5,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,8 @@ public class FileService {
     public List<List<String>> readFile(String filePath) throws IOException {
         try{
             // OPEN FILE
-            FileInputStream file = new FileInputStream(filePath);
+            //FileInputStream file = new FileInputStream(filePath);
+            InputStream file = new ClassPathResource("Interns_2025_SWIFT_CODES.xlsx").getInputStream();
             Workbook workbook = new XSSFWorkbook(file);
             Sheet sheet = workbook.getSheetAt(0);
 

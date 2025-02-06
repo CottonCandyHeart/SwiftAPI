@@ -1,4 +1,5 @@
-FROM ubuntu:latest
-LABEL authors="veronica"
+FROM openjdk:21-jdk
+ARG JAR_FILE=target/*.jar
+COPY ./target/SwiftAPI-1.0-SNAPSHOT.jar app.jar
 
-ENTRYPOINT ["top", "-b"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
