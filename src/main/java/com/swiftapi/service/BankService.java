@@ -144,41 +144,16 @@ public class BankService {
     }
 
     public void checkBank(String ISO2, String SWIFTCode, boolean isHeadquarter) throws InvalidISO2Exception, InvalidSwiftCodeException {
-        if (ISO2.length() != 2) {
-            System.out.println("ISO != 2");
-            throw new InvalidISO2Exception("Too many characters in ISO2: " + ISO2);
-            //return false;
-        }
-        if (containsDigits(ISO2)) {
-            System.out.println("ISO Contains digits");
-            throw new InvalidISO2Exception("ISO Contains digits: " + ISO2);
-            //return false;
-        }
-        if (hasSpecialCharacters(ISO2)) {
-            System.out.println("ISO contains special characters");
-            throw new InvalidISO2Exception("ISO contains special characters: " + ISO2);
-            //return false;
-        }
-        if (SWIFTCode.length() != 11 && SWIFTCode.length() != 8) {
-            System.out.println("swift code lenght: " + SWIFTCode.length());
-            throw new InvalidSwiftCodeException("Invalid SWIFT Code length: " + SWIFTCode);
-            //return false;
-        }
-        if (containsDigits(SWIFTCode.substring(0,6))) {
-            System.out.println("swift code contains digits");
-            throw new InvalidSwiftCodeException("SWIFT Code contains digits: " + SWIFTCode);
-            //return false;
-        }
-        if (hasSpecialCharacters(SWIFTCode)) {
-            System.out.println("swift code contains special characters");
-            throw new InvalidSwiftCodeException("SWIFT Code contains special characters: " + SWIFTCode);
-            //return false;
-        }
-        if (!isHeadquarter && (SWIFTCode.substring(SWIFTCode.length()-3).equals("XXX") || SWIFTCode.length() == 8)) {
-            System.out.println("bank should be a headquarter\n" + isHeadquarter + "\n" + SWIFTCode.substring(SWIFTCode.length()-3) + "\n" + SWIFTCode.length());
-            throw new InvalidSwiftCodeException("Invalid Bank type for the SWIFT Code: " + SWIFTCode + " and Bank type: " + isHeadquarter);
-            //return false;
-        }
+        Optional<Bank> opt = br.findBySWIFTCode(SWIFTCode);
+        if (opt.isPresent()) throw new InvalidSwiftCodeException("SWIFT Code already exists");
+
+        if (ISO2.length() != 2) throw new InvalidISO2Exception("Too many characters in ISO2: " + ISO2);
+        if (containsDigits(ISO2)) throw new InvalidISO2Exception("ISO Contains digits: " + ISO2);
+        if (hasSpecialCharacters(ISO2)) throw new InvalidISO2Exception("ISO contains special characters: " + ISO2);
+        if (SWIFTCode.length() != 11 && SWIFTCode.length() != 8) throw new InvalidSwiftCodeException("Invalid SWIFT Code length: " + SWIFTCode);
+        if (containsDigits(SWIFTCode.substring(0,6))) throw new InvalidSwiftCodeException("SWIFT Code contains digits: " + SWIFTCode);
+        if (hasSpecialCharacters(SWIFTCode)) throw new InvalidSwiftCodeException("SWIFT Code contains special characters: " + SWIFTCode);
+        if (!isHeadquarter && (SWIFTCode.substring(SWIFTCode.length()-3).equals("XXX") || SWIFTCode.length() == 8)) throw new InvalidSwiftCodeException("Invalid Bank type for the SWIFT Code: " + SWIFTCode + " and Bank type: " + isHeadquarter);
     }
 
     public boolean containsDigits(String text) {
@@ -186,6 +161,6 @@ public class BankService {
     }
 
     public boolean hasSpecialCharacters(String text){
-        return text.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+        return text.matches(".*[-!@#$%^&*(),.?\":{}|<>].*");
     }
 }
