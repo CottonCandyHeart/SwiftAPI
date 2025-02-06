@@ -1,5 +1,8 @@
 package com.swiftapi.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.swiftapi.exception.InvalidISO2Exception;
+import com.swiftapi.exception.InvalidSwiftCodeException;
 import com.swiftapi.model.Bank;
 import com.swiftapi.model.Country;
 import com.swiftapi.model.CountryISO2Request;
@@ -18,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 public class Controller {
@@ -96,15 +100,16 @@ public class Controller {
     @PostMapping("/v1/swift-codes")
     public ResponseEntity<String> addSwiftCode(@RequestBody SwiftCodeRequest scr) {
         try{
-            boolean success = bs.saveBank(scr);
+            ObjectMapper mapper = new ObjectMapper();
+            System.out.println("Received JSON: " + mapper.writeValueAsString(scr));
+            System.out.println("isHeadquarter: " + scr.isHeadquarter());
 
-            if (success) {
-                return ResponseEntity.status(HttpStatus.CREATED).body("SWIFT code successfully added.");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding SWIFT code.");
-            }
+            bs.saveBank(scr);
+            return ResponseEntity.status(HttpStatus.CREATED).body("SWIFT code successfully added.");
         } catch (DataAccessException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Database error", e);
+        } catch (InvalidSwiftCodeException | InvalidISO2Exception | JsonProcessingException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 

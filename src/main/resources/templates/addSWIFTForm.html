@@ -22,8 +22,8 @@
     <label for="countryISO2" style="padding: 10px">Country ISO2:</label>
     <input type="text" id="countryISO2" name="countryISO2" style="margin: 10px" required><br>
 
-    <label for="isHeadquarter" style="padding: 10px">Is Headquarter:</label>
-    <input type="checkbox" id="isHeadquarter" name="isHeadquarter" style="margin: 10px"><br>
+    <label for="headquarter" style="padding: 10px">Is Headquarter:</label>
+    <input type="checkbox" id="headquarter" name="headquarter" style="margin: 10px"><br>
 
     <button type="submit" style="margin-top: 20px; margin-left: 10px">Submit</button>
 </form>
@@ -36,6 +36,7 @@
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
+        data.headquarter = document.getElementById('headquarter').checked;
 
         try {
             const response = await fetch('/v1/swift-codes', {
@@ -46,7 +47,12 @@
                 body: JSON.stringify(data),
             });
 
+            console.log("Raw response:", response);
+
             const result = await response.json().catch(() => null);
+
+            console.log("Parsed response:", result);
+
             if (response.ok) {
                 document.getElementById('responseMessage').innerText = result ? result.message : 'Success!';
             } else {

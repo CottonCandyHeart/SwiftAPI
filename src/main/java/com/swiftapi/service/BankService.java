@@ -1,5 +1,7 @@
 package com.swiftapi.service;
 
+import com.swiftapi.exception.InvalidISO2Exception;
+import com.swiftapi.exception.InvalidSwiftCodeException;
 import com.swiftapi.model.Bank;
 import com.swiftapi.model.Country;
 import com.swiftapi.model.SwiftCodeRequest;
@@ -20,23 +22,22 @@ public class BankService {
         this.cr = cr;
     }
 
-    public boolean saveBank(SwiftCodeRequest scr){
+    public void saveBank(SwiftCodeRequest scr) throws InvalidSwiftCodeException, InvalidISO2Exception {
         try{
             // FORM DATA
             String ISO2 = scr.getCountryISO2().toUpperCase();
             String SWIFTCode = scr.getSwiftCode().toUpperCase();
-            String codeType = "BIC11";
+            String codeType = "BIC" + SWIFTCode.length();
             String bankName = scr.getBankName().toUpperCase();
             String address = scr.getAddress().toUpperCase();
             String townName = "";
             String countryName = scr.getCountryName().toUpperCase();
             String timeZone = "";
             boolean isHeadquarter = scr.isHeadquarter();
+            System.out.println("SAVE BANK: " + isHeadquarter);
 
-            // ERRORS
-            if (ISO2.length() != 2) return false;
-            if (SWIFTCode.length() != 11) return false;
-            if (isHeadquarter == false && SWIFTCode.substring(SWIFTCode.length()-3).equals("XXX")) return false;
+            // CHECK ERRORS
+            checkBank(ISO2, SWIFTCode, isHeadquarter);
 
             Optional<Country> countryExist = cr.findByISO2(ISO2);
 
@@ -65,10 +66,8 @@ public class BankService {
             br.save(bank);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            throw e;
         }
-
-        return true;
     }
 
     public boolean saveBank(List<List<String>> data){
@@ -142,5 +141,51 @@ public class BankService {
             return false;
         }
 
+    }
+
+    public void checkBank(String ISO2, String SWIFTCode, boolean isHeadquarter) throws InvalidISO2Exception, InvalidSwiftCodeException {
+        if (ISO2.length() != 2) {
+            System.out.println("ISO != 2");
+            throw new InvalidISO2Exception("Too many characters in ISO2: " + ISO2);
+            //return false;
+        }
+        if (containsDigits(ISO2)) {
+            System.out.println("ISO Contains digits");
+            throw new InvalidISO2Exception("ISO Contains digits: " + ISO2);
+            //return false;
+        }
+        if (hasSpecialCharacters(ISO2)) {
+            System.out.println("ISO contains special characters");
+            throw new InvalidISO2Exception("ISO contains special characters: " + ISO2);
+            //return false;
+        }
+        if (SWIFTCode.length() != 11 && SWIFTCode.length() != 8) {
+            System.out.println("swift code lenght: " + SWIFTCode.length());
+            throw new InvalidSwiftCodeException("Invalid SWIFT Code length: " + SWIFTCode);
+            //return false;
+        }
+        if (containsDigits(SWIFTCode.substring(0,6))) {
+            System.out.println("swift code contains digits");
+            throw new InvalidSwiftCodeException("SWIFT Code contains digits: " + SWIFTCode);
+            //return false;
+        }
+        if (hasSpecialCharacters(SWIFTCode)) {
+            System.out.println("swift code contains special characters");
+            throw new InvalidSwiftCodeException("SWIFT Code contains special characters: " + SWIFTCode);
+            //return false;
+        }
+        if (!isHeadquarter && (SWIFTCode.substring(SWIFTCode.length()-3).equals("XXX") || SWIFTCode.length() == 8)) {
+            System.out.println("bank should be a headquarter\n" + isHeadquarter + "\n" + SWIFTCode.substring(SWIFTCode.length()-3) + "\n" + SWIFTCode.length());
+            throw new InvalidSwiftCodeException("Invalid Bank type for the SWIFT Code: " + SWIFTCode + " and Bank type: " + isHeadquarter);
+            //return false;
+        }
+    }
+
+    public boolean containsDigits(String text) {
+        return text.matches(".*\\d.*");
+    }
+
+    public boolean hasSpecialCharacters(String text){
+        return text.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
     }
 }

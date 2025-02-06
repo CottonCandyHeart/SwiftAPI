@@ -1,5 +1,6 @@
 package com.swiftapi.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,14 +23,14 @@ public class SwiftCodeRequest {
         private String address;
         private String bankName;
         private String countryISO2;
-        private boolean isHeadquarter;
+        private boolean headquarter;
         private String swiftCode;
 
         public Branch(Bank bank) {
             this.address = bank.getAddress();
             this.bankName = bank.getBankName();
             this.countryISO2 = bank.getCountry().getISO2();
-            this.isHeadquarter = bank.isHeadquarter();
+            this.headquarter = bank.isHeadquarter();
             this.swiftCode = bank.getSWIFTCode();
         }
     }
