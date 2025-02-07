@@ -15,8 +15,7 @@ RUNNING INSTRUCTION
 - Open downloaded project
 - Open Docker
 - in terminal:
-  - mvn clear
-  - mvn install
+  - mvn clean install
   - docker build -t swiftapi .
   - docker-compose -f compose.yaml up
 - to run tests:
