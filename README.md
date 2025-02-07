@@ -24,6 +24,7 @@ A SWIFT code, also known as a Bank Identifier Code (BIC), is a unique identifier
 
 ## HOW TO USE
 - make sure all containers are up
+- go to project folder
 - first endpoint:
   - showing data for given SWIFT Code
   - terminal:
