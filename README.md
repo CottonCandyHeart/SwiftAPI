@@ -23,6 +23,7 @@ A SWIFT code, also known as a Bank Identifier Code (BIC), is a unique identifier
   - mvn test
 
 ## HOW TO USE
+- make sure all containers are up
 - first endpoint:
   - showing data for given SWIFT Code
   - terminal:
