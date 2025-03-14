@@ -37,16 +37,16 @@ A SWIFT code, also known as a Bank Identifier Code (BIC), is a unique identifier
   - showing all SWIFT Codes for given ISO2 Code
   - terminal:
     - curl -X GET http://localhost:8080/v1/swift-codes/country/{country-ISO2}
-    - curl -X GET http://localhost:8080/v1/swift-codes/country/PL
+    - example: curl -X GET http://localhost:8080/v1/swift-codes/country/PL
   - browser:
     - http://localhost:8080/v1/swift-codes/country/{country-ISO2}
-    - http://localhost:8080/v1/swift-codes/country/PL
+    - example: http://localhost:8080/v1/swift-codes/country/PL
 - third endpoint:
   - adding new SWIFT Code to Database
   - terminal:
     - curl -X POST "http://localhost:8080/v1/swift-codes" -H "Content-Type: application/json" -d '{"address":{bank-address},
       "bankName":{bank-name}, "countryISO2":{country-ISO2}, "countryName":{country-name}, "swiftCode":{swift-code}, "headquarter":{is-headquarter}}'
-    - curl -X POST "http://localhost:8080/v1/swift-codes" -H "Content-Type: application/json" -d '{"address":"TEST STREET 1",
+    - example: curl -X POST "http://localhost:8080/v1/swift-codes" -H "Content-Type: application/json" -d '{"address":"TEST STREET 1",
       "bankName":"TESTBANK", "countryISO2":"PL", "countryName":"POLAND", "swiftCode":"ABCDEFGHXXX", "headquarter":true}'
   - browser:
     - http://localhost:8080/v1/swift-codes
@@ -55,4 +55,4 @@ A SWIFT code, also known as a Bank Identifier Code (BIC), is a unique identifier
   - deleting existing SWIFT Code from Database
   - terminal:
     - curl -X DELETE http://localhost:8080/v1/swift-codes/{swift-code}
-    - curl -X DELETE http://localhost:8080/v1/swift-codes/ABCDEFGHIJ
+    - example: curl -X DELETE http://localhost:8080/v1/swift-codes/ABCDEFGHIJ
